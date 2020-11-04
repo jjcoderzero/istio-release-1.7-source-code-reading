@@ -1,7 +1,15 @@
 <component name="ProjectDictionaryState">
   <dictionary name="wanj016">
     <words>
+      <w>httpbin</w>
       <w>istio</w>
+      <w>istioctl</w>
+      <w>kube</w>
+      <w>liveness</w>
+      <w>multicluster</w>
+      <w>prober</w>
+      <w>probers</w>
+      <w>webhooks</w>
     </words>
   </dictionary>
 </component>

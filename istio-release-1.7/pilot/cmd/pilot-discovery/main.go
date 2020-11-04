@@ -1,17 +1,3 @@
-// Copyright Istio Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package main
 
 import (
@@ -39,9 +25,9 @@ import (
 )
 
 const (
-	defaultMCPMaxMessageSize        = 1024 * 1024 * 4 // default gRPC maximum message size
-	defaultMCPInitialConnWindowSize = 1024 * 1024     // default gRPC InitialWindowSize
-	defaultMCPInitialWindowSize     = 1024 * 1024     // default gRPC ConnWindowSize
+	defaultMCPMaxMessageSize        = 1024 * 1024 * 4  // 默认gRPC最大消息大小
+	defaultMCPInitialConnWindowSize = 1024 * 1024      // 默认gRPC初始化窗口大小
+	defaultMCPInitialWindowSize     = 1024 * 1024      // 默认gRPC连接窗口大小
 )
 
 var (
@@ -69,16 +55,16 @@ var (
 
 			spiffe.SetTrustDomain(spiffe.DetermineTrustDomain(serverArgs.RegistryOptions.KubeOptions.TrustDomain, hasKubeRegistry()))
 
-			// Create the stop channel for all of the servers.
+			// 创建一个接收空结构的stop channel用来停止所有servers
 			stop := make(chan struct{})
 
-			// Create the server for the discovery service.
+			// 创建服务发现的 Server
 			discoveryServer, err := bootstrap.NewServer(serverArgs)
 			if err != nil {
 				return fmt.Errorf("failed to create discovery service: %v", err)
 			}
 
-			// Start the server
+			// 运行 Server 中注册的所有服务
 			if err := discoveryServer.Start(stop); err != nil {
 				return fmt.Errorf("failed to start discovery service: %v", err)
 			}
@@ -92,7 +78,7 @@ var (
 	}
 )
 
-// when we run on k8s, the default trust domain is 'cluster.local', otherwise it is the empty string
+// 当我们运行在k8s上，默认的trust domain 是 'cluster.local', 否则是空的字符串
 func hasKubeRegistry() bool {
 	for _, r := range serverArgs.RegistryOptions.Registries {
 		if serviceregistry.ProviderID(r) == serviceregistry.Kubernetes {

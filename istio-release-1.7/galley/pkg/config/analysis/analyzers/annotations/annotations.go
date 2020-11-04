@@ -1,4 +1,3 @@
-// Copyright Istio Authors
 package annotations
 
 import (

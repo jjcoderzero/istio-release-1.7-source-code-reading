@@ -46,21 +46,20 @@ var _ mesh.NetworksHolder = &Environment{}
 
 // Environment provides an aggregate environmental API for Pilot
 type Environment struct {
-	// Discovery interface for listing services and instances.
-	ServiceDiscovery
+	ServiceDiscovery // 服务发现的接口模型，主要列出 services 和 instances
 
 	// Config interface for listing routing rules
-	IstioConfigStore
+	IstioConfigStore // Istio 配置文件的存储器，主要列出 ServiceEntry 等配置
 
 	// Watcher is the watcher for the mesh config (to be merged into the config store)
-	mesh.Watcher
+	mesh.Watcher // mesh config 文件的监听器
 
 	// NetworksWatcher (loaded from a config map) provides information about the
 	// set of networks inside a mesh and how to route to endpoints in each
 	// network. Each network provides information about the endpoints in a
 	// routable L3 network. A single routable L3 network can have one or more
 	// service registries.
-	mesh.NetworksWatcher
+	mesh.NetworksWatcher // mesh network config 文件的监听器
 
 	// PushContext holds informations during push generation. It is reset on config change, at the beginning
 	// of the pushAll. It will hold all errors and stats and possibly caches needed during the entire cache computation.
@@ -68,10 +67,9 @@ type Environment struct {
 	// ALL USE DURING A PUSH SHOULD USE THE ONE CREATED AT THE
 	// START OF THE PUSH, THE GLOBAL ONE MAY CHANGE AND REFLECT A DIFFERENT
 	// CONFIG AND PUSH
-	PushContext *PushContext
+	PushContext *PushContext // 在推送（下发 xDS）生成期间保存信息的上下文
 
-	// DomainSuffix provides a default domain for the Istio server.
-	DomainSuffix string
+	DomainSuffix string // istio server 默认的后缀域名
 }
 
 func (e *Environment) GetDomainSuffix() string {

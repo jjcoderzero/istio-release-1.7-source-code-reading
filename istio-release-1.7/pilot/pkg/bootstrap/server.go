@@ -1,17 +1,3 @@
-// Copyright Istio Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package bootstrap
 
 import (
@@ -75,8 +61,7 @@ import (
 )
 
 var (
-	// DefaultPlugins is the default list of plugins to enable, when no plugin(s)
-	// is specified through the command line
+	// 当在命令行中没有指定插件，DefaultPlugins 是默认启用的插件列表。
 	DefaultPlugins = []string{
 		plugin.Authn,
 		plugin.Authz,
@@ -109,24 +94,24 @@ type startFunc func(stop <-chan struct{}) error
 // readinessProbe defines a function that will be used indicate whether a server is ready.
 type readinessProbe func() (bool, error)
 
-// Server contains the runtime configuration for the Pilot discovery service.
+// Server 包含Pilot 服务发现的运行时配置。
 type Server struct {
 	MonitorListeningAddr net.Addr
 
 	// TODO(nmittler): Consider alternatives to exposing these directly
-	EnvoyXdsServer *xds.DiscoveryServer
+	EnvoyXdsServer *xds.DiscoveryServer //Xds服务
 
 	clusterID   string
-	environment *model.Environment
+	environment *model.Environment // Pilot 环境所需的 API 集合
 
 	kubeRestConfig *rest.Config
 	kubeClient     kubelib.Client
-	kubeRegistry   *kubecontroller.Controller
-	multicluster   *kubecontroller.Multicluster
+	kubeRegistry   *kubecontroller.Controller // 处理 Kubernetes 主集群的注册中心
+	multicluster   *kubecontroller.Multicluster // 处理 Kubernetes 多个集群的注册中心
 
-	configController  model.ConfigStoreCache
-	ConfigStores      []model.ConfigStoreCache
-	serviceEntryStore *serviceentry.ServiceEntryStore
+	configController  model.ConfigStoreCache // 统一处理配置数据（如 VirtualService 等) 的 Controller
+	ConfigStores      []model.ConfigStoreCache // 不同配置信息的缓存器，提供 Get、List、Create 等方法
+	serviceEntryStore *serviceentry.ServiceEntryStore // 单独处理 ServiceEntry 的 Controller
 
 	httpServer       *http.Server // debug, monitoring and readiness Server.
 	httpsServer      *http.Server // webhooks HTTPS Server.
@@ -145,7 +130,7 @@ type Server struct {
 	DNSListener    net.Listener
 	IstioDNSServer *dns.IstioDNS
 
-	// fileWatcher used to watch mesh config, networks and certificates.
+	// fileWatcher 用来监听mesh config, networks和certificates
 	fileWatcher filewatcher.FileWatcher
 
 	certController *chiron.WebhookController
