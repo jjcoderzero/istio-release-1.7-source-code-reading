@@ -68,7 +68,7 @@ var (
 			if err := discoveryServer.Start(stop); err != nil {
 				return fmt.Errorf("failed to start discovery service: %v", err)
 			}
-
+			// 等待 SIGINT 和 SIGTERM 信号并关闭 stop channel
 			cmd.WaitSignal(stop)
 			// Wait until we shut down. In theory this could block forever; in practice we will get
 			// forcibly shut down after 30s in Kubernetes.

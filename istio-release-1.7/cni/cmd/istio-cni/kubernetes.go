@@ -11,15 +11,15 @@ import (
 	"istio.io/pkg/log"
 )
 
-// newKubeClient is a unit test override variable for interface create.
+// newKubeClient是一个用于创建接口的单元测试覆盖变量
 var newKubeClient = newK8sClient
 
-// getKubePodInfo is a unit test override variable for interface create.
+// getKubePodInfo是一个用于创建接口的单元测试覆盖变量
 var getKubePodInfo = getK8sPodInfo
 
-// newK8sClient returns a Kubernetes client
+// newK8sClient 返回一个kubernetes客户端
 func newK8sClient(conf PluginConf) (*kubernetes.Clientset, error) {
-	// Some config can be passed in a kubeconfig file
+	// 一些配置可以在kubeconfig文件中传递
 	kubeconfig := conf.Kubernetes.Kubeconfig
 
 	// Config can be overridden by config passed in explicitly in the network config.

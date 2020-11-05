@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	// Create context that cancels on termination signal
+	// 创建在终止信号上取消的上下文
 	ctx, cancel := context.WithCancel(context.Background())
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)

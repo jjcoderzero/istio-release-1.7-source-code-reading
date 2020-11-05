@@ -71,15 +71,13 @@ var (
 )
 
 const (
-	// debounce file watcher events to minimize noise in logs
-	watchDebounceDelay = 100 * time.Millisecond
+	watchDebounceDelay = 100 * time.Millisecond // 解除文件监视器事件，以尽量减少日志中的干扰
 )
 
 func init() {
-	// Disable gRPC tracing. It has performance impacts (See https://github.com/grpc/grpc-go/issues/695)
-	grpc.EnableTracing = false
+	grpc.EnableTracing = false // 禁用gRPC跟踪
 
-	// Export pilot version as metric for fleet analytics.
+	// 导出pilot版本作为度量为fleet的分析
 	pilotVersion := prom.NewGaugeVec(prom.GaugeOpts{
 		Name: "pilot_info",
 		Help: "Pilot version and build information.",
@@ -88,10 +86,10 @@ func init() {
 	pilotVersion.With(prom.Labels{"version": version.Info.String()}).Set(1)
 }
 
-// startFunc defines a function that will be used to start one or more components of the Pilot discovery service.
+// startFunc定义将用于启动Pilot服务发现的一个或多个组件的函数
 type startFunc func(stop <-chan struct{}) error
 
-// readinessProbe defines a function that will be used indicate whether a server is ready.
+// readinessProbe 定义将用于指示服务器是否准备就绪的函数.
 type readinessProbe func() (bool, error)
 
 // Server 包含Pilot 服务发现的运行时配置。
@@ -141,8 +139,7 @@ type Server struct {
 	istiodCert   *tls.Certificate
 	jwtPath      string
 
-	// startFuncs keeps track of functions that need to be executed when Istiod starts.
-	startFuncs []startFunc
+	startFuncs []startFunc // startFuncs跟踪Istiod启动时需要执行的函数
 	// requiredTerminations keeps track of components that should block server exit
 	// if they are not stopped. This allows important cleanup tasks to be completed.
 	// Note: this is still best effort; a process can die at any time.
@@ -157,7 +154,7 @@ type Server struct {
 	peerCertVerifier *spiffe.PeerCertVerifier
 }
 
-// NewServer creates a new Server instance based on the provided arguments.
+// NewServer 根据提供的参数创建一个新的服务器实例.
 func NewServer(args *PilotArgs) (*Server, error) {
 	e := &model.Environment{
 		ServiceDiscovery: aggregate.NewController(),
@@ -175,11 +172,11 @@ func NewServer(args *PilotArgs) (*Server, error) {
 	}
 
 	if args.ShutdownDuration == 0 {
-		s.shutdownDuration = 10 * time.Second // If not specified set to 10 seconds.
+		s.shutdownDuration = 10 * time.Second // 如果未指定，设置为10秒.
 	}
 
 	if args.RegistryOptions.KubeOptions.WatchedNamespaces != "" {
-		// Add the control-plane namespace to the list of watched namespaces.
+		// 将控制平面名称空间添加到监视名称空间列表中.
 		args.RegistryOptions.KubeOptions.WatchedNamespaces = fmt.Sprintf("%s,%s",
 			args.RegistryOptions.KubeOptions.WatchedNamespaces,
 			args.Namespace,
@@ -190,7 +187,7 @@ func NewServer(args *PilotArgs) (*Server, error) {
 
 	s.initMeshConfiguration(args, s.fileWatcher)
 
-	// Apply the arguments to the configuration.
+	// 将参数应用于配置
 	if err := s.initKubeClient(args); err != nil {
 		return nil, fmt.Errorf("error initializing kube client: %v", err)
 	}
@@ -198,7 +195,7 @@ func NewServer(args *PilotArgs) (*Server, error) {
 	s.initMeshNetworks(args, s.fileWatcher)
 	s.initMeshHandlers()
 
-	// Parse and validate Istiod Address.
+	// 解析并验证Istiod地址.
 	istiodHost, _, err := e.GetDiscoveryAddress()
 	if err != nil {
 		return nil, err
@@ -211,33 +208,33 @@ func NewServer(args *PilotArgs) (*Server, error) {
 	s.initGenerators()
 	s.initJwtPolicy()
 
-	// Options based on the current 'defaults' in istio.
+	// istio中基于当前“defaults”的选项
 	caOpts := &CAOptions{
 		TrustDomain: s.environment.Mesh().TrustDomain,
 		Namespace:   args.Namespace,
 	}
 
-	// CA signing certificate must be created first if needed.
+	// 如果需要，必须首先创建CA签名证书.
 	if err := s.maybeCreateCA(caOpts); err != nil {
 		return nil, err
 	}
 
-	// Create Istiod certs and setup watches.
+	// 创建Istiod证书和设置监听.
 	if err := s.initIstiodCerts(args, string(istiodHost)); err != nil {
 		return nil, err
 	}
 
-	// Initialize the SPIFFE peer cert verifier.
+	// 初始化SPIFFE对等证书验证程序.
 	if err := s.setPeerCertVerifier(args.ServerOptions.TLSOptions); err != nil {
 		return nil, err
 	}
 
-	// Secure gRPC Server must be initialized after CA is created as may use a Citadel generated cert.
+	// 安全gRPC服务器必须在创建CA后初始化，因为可能使用Citadel生成的证书.
 	if err := s.initSecureDiscoveryService(args); err != nil {
 		return nil, fmt.Errorf("error initializing secure gRPC Listener: %v", err)
 	}
 
-	// common https server for webhooks (e.g. injection, validation)
+	// 用于网络钩子的常用https服务器(例如注入、验证)
 	s.initSecureWebhookServer(args)
 
 	wh, err := s.initSidecarInjector(args)
@@ -307,13 +304,11 @@ func getClusterID(args *PilotArgs) string {
 	return clusterID
 }
 
-// Start starts all components of the Pilot discovery service on the port specified in DiscoveryServerOptions.
-// If Port == 0, a port number is automatically chosen. Content serving is started by this method,
-// but is executed asynchronously. Serving can be canceled at any time by closing the provided stop channel.
+// 在DiscoveryServerOptions中指定的端口上启动Pilot服务发现的所有组件。如果Port == 0，则会自动选择一个端口号。内容服务由此方法启动，但异步执行。可以在任何时候通过关闭所提供的停止管道来取消服务。
 func (s *Server) Start(stop <-chan struct{}) error {
 	log.Infof("Staring Istiod Server with primary cluster %s", s.clusterID)
 
-	// Now start all of the components.
+	// 现在启动所有组件
 	for _, fn := range s.startFuncs {
 		if err := fn(stop); err != nil {
 			return err

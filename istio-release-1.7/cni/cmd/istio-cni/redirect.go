@@ -1,4 +1,4 @@
-// Defines the redirect object and operations.
+// 定义重定向对象和操作。
 package main
 
 import (

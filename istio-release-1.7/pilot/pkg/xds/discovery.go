@@ -1,17 +1,3 @@
-// Copyright Istio Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package xds
 
 import (
@@ -38,10 +24,8 @@ import (
 
 var (
 	versionMutex sync.RWMutex
-	// version is the timestamp of the last registry event.
-	version = "0"
-	// versionNum counts versions
-	versionNum = atomic.NewUint64(0)
+	version = "0" // version是最后一个注册表事件的时间戳
+	versionNum = atomic.NewUint64(0) //versionNum计数版本
 
 	periodicRefreshMetrics = 10 * time.Second
 
@@ -68,20 +52,16 @@ func init() {
 	enableEDSDebounce = features.EnableEDSDebounce.Get()
 }
 
-// DiscoveryServer is Pilot's gRPC implementation for Envoy's v2 xds APIs
+// DiscoveryServer是Pilot为Envoy的v2 xds api提供的gRPC实现
 type DiscoveryServer struct {
-	// Env is the model environment.
-	Env *model.Environment
+	Env *model.Environment // Env是model环境
 
-	// MemRegistry is used for debug and load testing, allow adding services. Visible for testing.
-	MemRegistry *memory.ServiceDiscovery
+	MemRegistry *memory.ServiceDiscovery // MemRegistry用于调试和负载测试，允许添加服务
 
 	// MemRegistry is used for debug and load testing, allow adding services. Visible for testing.
 	MemConfigController model.ConfigStoreCache
 
-	// ConfigGenerator is responsible for generating data plane configuration using Istio networking
-	// APIs and service registry info
-	ConfigGenerator core.ConfigGenerator
+	ConfigGenerator core.ConfigGenerator // ConfigGenerator负责使用Istio网络api和服务注册表信息生成数据平面配置
 
 	// Generators allow customizing the generated config, based on the client metadata.
 	// Key is the generator type - will match the Generator metadata to set the per-connection

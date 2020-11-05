@@ -1,14 +1,34 @@
 <component name="ProjectDictionaryState">
   <dictionary name="wanj016">
     <words>
+      <w>cidrs</w>
+      <w>clientset</w>
+      <w>daemonset</w>
+      <w>golint</w>
       <w>httpbin</w>
+      <w>iptables</w>
       <w>istio</w>
       <w>istioctl</w>
+      <w>istiod</w>
+      <w>istioinit</w>
+      <w>jwks</w>
       <w>kube</w>
+      <w>kubecfg</w>
+      <w>kubeconfig</w>
+      <w>kubelet</w>
+      <w>kubevirt</w>
       <w>liveness</w>
       <w>multicluster</w>
+      <w>netns</w>
+      <w>nftables</w>
+      <w>nsenter</w>
       <w>prober</w>
       <w>probers</w>
+      <w>prog</w>
+      <w>reconciler</w>
+      <w>stylecheck</w>
+      <w>tproxy</w>
+      <w>unmarshalling</w>
       <w>webhooks</w>
     </words>
   </dictionary>

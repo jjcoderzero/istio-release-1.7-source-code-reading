@@ -1,6 +1,6 @@
 package config
 
-// Config struct defines the Istio CNI installation options
+// Config结构体定义Istio CNI安装选项
 type Config struct {
 	CNINetDir        string
 	MountedCNINetDir string

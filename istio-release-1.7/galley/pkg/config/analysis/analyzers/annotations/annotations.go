@@ -13,14 +13,13 @@ import (
 	"istio.io/istio/pkg/kube/inject"
 )
 
-// K8sAnalyzer checks for misplaced and invalid Istio annotations in K8s resources
-type K8sAnalyzer struct{}
+type K8sAnalyzer struct{} // K8sAnalyzer检查K8s资源中错误的和无效的Istio注释
 
 var (
 	istioAnnotations = annotation.AllResourceAnnotations()
 )
 
-// Metadata implements analyzer.Analyzer
+// Metadata实现analyzer.Analyzer
 func (*K8sAnalyzer) Metadata() analysis.Metadata {
 	return analysis.Metadata{
 		Name:        "annotations.K8sAnalyzer",
@@ -34,7 +33,7 @@ func (*K8sAnalyzer) Metadata() analysis.Metadata {
 	}
 }
 
-// Analyze implements analysis.Analyzer
+// Analyze实现analysis.Analyzer
 func (fa *K8sAnalyzer) Analyze(ctx analysis.Context) {
 	ctx.ForEach(collections.K8SCoreV1Namespaces.Name(), func(r *resource.Instance) bool {
 		fa.allowAnnotations(r, ctx, "Namespace", collections.K8SCoreV1Namespaces.Name())
@@ -100,7 +99,7 @@ outer:
 	}
 }
 
-// istioAnnotation is true if the annotation is in Istio's namespace
+// 如果注释在Istio的名称空间中，istioAnnotation为真
 func istioAnnotation(ann string) bool {
 	// We document this Kubernetes annotation, we should analyze it as well
 	if ann == "kubernetes.io/ingress.class" {

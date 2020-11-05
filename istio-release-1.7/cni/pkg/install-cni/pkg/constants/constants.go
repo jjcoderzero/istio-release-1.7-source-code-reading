@@ -1,6 +1,6 @@
 package constants
 
-// Command line arguments
+// 命令行参数
 const (
 	MountedCNINetDir     = "mounted-cni-net-dir"
 	CNINetDir            = "cni-net-dir"
@@ -18,7 +18,7 @@ const (
 	UpdateCNIBinaries    = "update-cni-binaries"
 )
 
-// Internal constants
+// 内部的常量
 const (
 	CNIBinDir             = "/opt/cni/bin"
 	HostCNIBinDir         = "/host/opt/cni/bin"

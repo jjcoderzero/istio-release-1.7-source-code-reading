@@ -1,5 +1,4 @@
-// A simple daemonset binary to repair pods that are crashlooping
-// after winning a race condition against istio-cni
+// 一个简单的daemonset二进制程序，用于修复在战胜istio-cni后发生崩溃循环的pods
 package main
 
 import (

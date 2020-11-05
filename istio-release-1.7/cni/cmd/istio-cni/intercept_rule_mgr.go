@@ -4,8 +4,7 @@ const (
 	defInterceptRuleMgrType = "iptables"
 )
 
-// InterceptRuleMgr configures networking tables (e.g. iptables or nftables) for
-// redirecting traffic to an Istio proxy.
+// InterceptRuleMgr配置网络表(例如iptables或nftables)来将流量重定向到Istio代理。
 type InterceptRuleMgr interface {
 	Program(netns string, redirect *Redirect) error
 }
@@ -18,12 +17,12 @@ var (
 	}
 )
 
-// Constructor factory for known types of InterceptRuleMgr's
+// 已知类型的InterceptRuleMgr的构造函数工厂
 func GetInterceptRuleMgrCtor(interceptType string) InterceptRuleMgrCtor {
 	return InterceptRuleMgrTypes[interceptType]
 }
 
-// Constructor for iptables InterceptRuleMgr
+// iptables的构造函数InterceptRuleMgr
 func IptablesInterceptRuleMgrCtor() InterceptRuleMgr {
 	return newIPTables()
 }

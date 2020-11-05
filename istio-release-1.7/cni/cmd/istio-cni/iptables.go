@@ -1,5 +1,4 @@
-// This is a sample chained plugin that supports multiple CNI versions. It
-// parses prevResult according to the cniVersion
+// 这是一个示例链式插件，支持多个CNI版本。它根据cniVersion解析prevResult
 package main
 
 import (
@@ -22,8 +21,7 @@ func newIPTables() InterceptRuleMgr {
 	return &iptables{}
 }
 
-// Program defines a method which programs iptables based on the parameters
-// provided in Redirect.
+// Program 定义基于重定向中提供的参数对iptables编程的方法.
 func (ipt *iptables) Program(netns string, rdrct *Redirect) error {
 	netnsArg := fmt.Sprintf("--net=%s", netns)
 	nsSetupExecutable := fmt.Sprintf("%s/%s", nsSetupBinDir, nsSetupProg)

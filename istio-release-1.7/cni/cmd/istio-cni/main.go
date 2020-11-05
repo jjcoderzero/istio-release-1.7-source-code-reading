@@ -1,5 +1,3 @@
-// This is a sample chained plugin that supports multiple CNI versions. It
-// parses prevResult according to the cniVersion
 package main
 
 import (
@@ -33,7 +31,7 @@ var (
 
 const ISTIOINIT = "istio-init"
 
-// Kubernetes a K8s specific struct to hold config
+// Kubernetes一个K8s特定的结构来保存配置
 type Kubernetes struct {
 	K8sAPIRoot           string   `json:"k8s_api_root"`
 	Kubeconfig           string   `json:"kubeconfig"`
@@ -43,22 +41,13 @@ type Kubernetes struct {
 	CNIBinDir            string   `json:"cni_bin_dir"`
 }
 
-// PluginConf is whatever you expect your configuration json to be. This is whatever
-// is passed in on stdin. Your plugin may wish to expose its functionality via
-// runtime args, see CONVENTIONS.md in the CNI spec.
+// PluginConf是您所期望的配置json。这是通过stdin传入的内容。你的插件可能希望通过运行时参数来公开它的功能
 type PluginConf struct {
-	types.NetConf // You may wish to not nest this type
+	types.NetConf // 您可能不希望嵌套此类型
 	RuntimeConfig *struct {
 		// SampleConfig map[string]interface{} `json:"sample"`
 	} `json:"runtimeConfig"`
 
-	// This is the previous result, when called in the context of a chained
-	// plugin. Because this plugin supports multiple versions, we'll have to
-	// parse this in two passes. If your plugin is not chained, this can be
-	// removed (though you may wish to error if a non-chainable plugin is
-	// chained.
-	// If you need to modify the result before returning it, you will need
-	// to actually convert it to a concrete versioned struct.
 	RawPrevResult *map[string]interface{} `json:"prevResult"`
 	PrevResult    *current.Result         `json:"-"`
 
@@ -67,8 +56,7 @@ type PluginConf struct {
 	Kubernetes Kubernetes `json:"kubernetes"`
 }
 
-// K8sArgs is the valid CNI_ARGS used for Kubernetes
-// The field names need to match exact keys in kubelet args for unmarshalling
+// K8sArgs是Kubernetes使用的有效CNI_ARGS，字段名需要与kubelet args中的精确键匹配才能进行数据编组
 type K8sArgs struct {
 	types.CommonArgs
 	IP                         net.IP
@@ -77,7 +65,7 @@ type K8sArgs struct {
 	K8S_POD_INFRA_CONTAINER_ID types.UnmarshallableString // nolint: golint, stylecheck
 }
 
-// parseConfig parses the supplied configuration (and prevResult) from stdin.
+// parseConfig从stdin中解析提供的配置(和prevResult)
 func parseConfig(stdin []byte) (*PluginConf, error) {
 	conf := PluginConf{}
 
@@ -85,7 +73,7 @@ func parseConfig(stdin []byte) (*PluginConf, error) {
 		return nil, fmt.Errorf("failed to parse network configuration: %v", err)
 	}
 
-	// Parse previous result. Remove this if your plugin is not chained.
+	// 解析之前的结果。如果你的插件没有链接，删除它.
 	if conf.RawPrevResult != nil {
 		resultBytes, err := json.Marshal(conf.RawPrevResult)
 		if err != nil {
