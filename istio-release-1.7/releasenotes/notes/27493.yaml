@@ -1,6 +1,0 @@
-apiVersion: release-notes/v2
-kind: bug-fix
-area: networking
-releaseNotes:
-  - |
-    **Fixed** deleting the remote-secret for multicluster installation removes remote endpoints.
